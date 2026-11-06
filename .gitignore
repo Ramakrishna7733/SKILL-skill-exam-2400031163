@@ -1,0 +1,12 @@
+﻿.metadata/
+.settings/
+.project
+.classpath
+target/
+*.class
+.vscode/
+.idea/
+.env
+.env.*
+!.env.example
+.git_backup/

@@ -1,0 +1,35 @@
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: hospital-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD}
+      POSTGRES_DB: skill_exam_2400031163
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d skill_exam_2400031163"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    image: docker-skill-exam-2400031163:latest
+    container_name: hospital-backend
+    restart: unless-stopped
+    ports:
+      - "1163:2006"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/skill_exam_2400031163
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD}
+volumes:
+  postgres_data:
